@@ -114,7 +114,7 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-gray-100">
+            <tr>
               <th className="p-2 text-center">Select</th>
               <th className="p-2 text-left">Item</th>
               <th className="p-2 text-right">Unit Price</th>
@@ -173,7 +173,7 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
 
       {/* User Bill Summary */}
       {userBill && userBill.selectedItems.length > 0 && (
-        <div className="mt-6 border p-4 rounded-lg bg-gray-50">
+        <div className="mt-6 border p-4 rounded-lg">
           <h3 className="text-lg font-semibold mb-3">Your Bill</h3>
 
           <div className="space-y-2">

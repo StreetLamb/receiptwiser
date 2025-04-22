@@ -160,7 +160,7 @@ export default function ReceiptEditor({
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-gray-100">
+            <tr>
               <th className="p-2 text-left">Qty</th>
               <th className="p-2 text-left">Item</th>
               <th className="p-2 text-right">Unit Price ($)</th>
@@ -191,7 +191,7 @@ export default function ReceiptEditor({
                     onChange={(e) =>
                       updateItem(index, { name: e.target.value })
                     }
-                    className="w-full p-1 border rounded"
+                    className="w-full min-w-[150px] p-1 border rounded"
                     placeholder="Item name"
                   />
                 </td>
