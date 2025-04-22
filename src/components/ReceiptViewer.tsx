@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Receipt, ReceiptItem, UserBill } from "@/types";
+import { FaWhatsapp } from "react-icons/fa";
 
 interface ReceiptViewerProps {
   receipt: Receipt;
@@ -39,6 +40,36 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
 
     setSelectedItems(newSelectedItems);
     calculateBill(newSelectedItems);
+  };
+
+  // Generate WhatsApp message with bill details
+  const generateWhatsAppMessage = () => {
+    if (!userBill) return "";
+
+    // Create message with bill details
+    let message = "Hi, I have paid for the following items:\n\n";
+
+    // Add items
+    userBill.selectedItems.forEach((item) => {
+      message += `${item.name} x ${item.selectedQuantity}: $${(
+        item.unitPrice * item.selectedQuantity
+      ).toFixed(2)}\n`;
+    });
+
+    // Add totals
+    message += `\nSubtotal: $${userBill.subtotal.toFixed(2)}`;
+    message += `\nTax: $${userBill.taxAmount.toFixed(2)}`;
+    message += `\nTotal: $${userBill.total.toFixed(2)}`;
+
+    return encodeURIComponent(message);
+  };
+
+  // Generate WhatsApp URL
+  const getWhatsAppUrl = () => {
+    if (!receipt.creatorPhone) return "";
+
+    const message = generateWhatsAppMessage();
+    return `https://wa.me/${receipt.creatorPhone}?text=${message}`;
   };
 
   // Calculate the user's bill based on selected items
@@ -173,6 +204,24 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
               <span>Total:</span>
               <span>${userBill.total.toFixed(2)}</span>
             </div>
+
+            {/* WhatsApp Payment Notification Button */}
+            {receipt.creatorPhone && (
+              <div className="mt-4 pt-2 border-t">
+                <a
+                  href={getWhatsAppUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center w-full py-2 px-4 bg-green-500 hover:bg-green-600 text-white rounded transition-colors"
+                >
+                  <FaWhatsapp className="mr-2 text-xl" />
+                  <span>Notify Payment via WhatsApp</span>
+                </a>
+                <p className="text-xs text-gray-500 mt-1 text-center">
+                  Click to notify the receipt creator that you have paid
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}

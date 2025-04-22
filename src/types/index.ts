@@ -14,6 +14,7 @@ export interface Receipt {
   taxPercent: number;
   taxAmount: number;
   total: number;
+  creatorPhone?: string; // Optional phone number for WhatsApp contact
 }
 
 // User selection interface

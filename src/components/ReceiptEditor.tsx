@@ -15,8 +15,11 @@ export default function ReceiptEditor({
 }: ReceiptEditorProps) {
   const [items, setItems] = useState<ReceiptItem[]>(receipt.items);
   const [taxPercent, setTaxPercent] = useState<number>(receipt.taxPercent);
+  const [creatorPhone, setCreatorPhone] = useState<string>(
+    receipt.creatorPhone || ""
+  );
 
-  // Calculate subtotal, tax amount, and total whenever items or tax percent change
+  // Calculate subtotal, tax amount, and total whenever items, tax percent, or phone number change
   useEffect(() => {
     const subtotal = calculateSubtotal(items);
     const taxAmount = (subtotal * taxPercent) / 100;
@@ -28,10 +31,11 @@ export default function ReceiptEditor({
       taxPercent,
       taxAmount,
       total,
+      creatorPhone: creatorPhone || undefined,
     };
 
     onChange(updatedReceipt);
-  }, [items, taxPercent]);
+  }, [items, taxPercent, creatorPhone]);
 
   // Calculate subtotal from items
   const calculateSubtotal = (items: ReceiptItem[]): number => {
@@ -187,6 +191,26 @@ export default function ReceiptEditor({
         <div className="flex justify-between items-center font-bold text-lg mt-2 pt-2 border-t">
           <span>Total:</span>
           <span>${receipt.total.toFixed(2)}</span>
+        </div>
+
+        {/* Creator Phone Number for WhatsApp */}
+        <div className="mt-4 pt-4 border-t">
+          <div className="flex items-center mb-2">
+            <span className="mr-2">
+              Your Phone Number (for WhatsApp payments):
+            </span>
+            <input
+              type="tel"
+              value={creatorPhone}
+              onChange={(e) => setCreatorPhone(e.target.value)}
+              placeholder="e.g. 6512345678"
+              className="p-1 border rounded"
+            />
+          </div>
+          <p className="text-xs text-gray-500">
+            Enter your phone number so people can notify you of payment via
+            WhatsApp
+          </p>
         </div>
       </div>
     </div>
