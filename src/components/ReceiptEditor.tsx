@@ -13,12 +13,23 @@ export default function ReceiptEditor({
   receipt,
   onChange,
 }: ReceiptEditorProps) {
-  const [items, setItems] = useState<ReceiptItem[]>(receipt.items);
+  const [items, setItems] = useState<ReceiptItem[]>([]);
   const [taxPercent, setTaxPercent] = useState<number>(receipt.taxPercent);
   const [creatorPhone, setCreatorPhone] = useState<string>(
     receipt.creatorPhone || ""
   );
   const [showImage, setShowImage] = useState<boolean>(true);
+
+  // Initialize items with correct unit prices calculated from total prices
+  useEffect(() => {
+    const initializedItems = receipt.items.map((item) => ({
+      ...item,
+      // Calculate unit price based on total price and quantity
+      unitPrice:
+        item.quantity > 0 ? item.totalPrice / item.quantity : item.unitPrice,
+    }));
+    setItems(initializedItems);
+  }, []);
 
   // Calculate subtotal, tax amount, and total whenever items, tax percent, or phone number change
   useEffect(() => {
@@ -62,6 +73,15 @@ export default function ReceiptEditor({
       const quantity = updatedItem.quantity ?? newItems[index].quantity;
       const unitPrice = updatedItem.unitPrice ?? newItems[index].unitPrice;
       newItems[index].totalPrice = quantity * unitPrice;
+    }
+
+    // If totalPrice changed directly, recalculate unitPrice
+    if (updatedItem.totalPrice !== undefined) {
+      const quantity = newItems[index].quantity;
+      // Avoid division by zero
+      if (quantity > 0) {
+        newItems[index].unitPrice = updatedItem.totalPrice / quantity;
+      }
     }
 
     setItems(newItems);
@@ -131,14 +151,20 @@ export default function ReceiptEditor({
       )}
 
       {/* Items Table */}
+      <div className="mb-2 text-sm text-gray-600">
+        <p>
+          Edit either Unit Price or Total Price - the other will be calculated
+          automatically based on quantity.
+        </p>
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-gray-100">
               <th className="p-2 text-left">Qty</th>
               <th className="p-2 text-left">Item</th>
-              <th className="p-2 text-right">Unit Price</th>
-              <th className="p-2 text-right">Total</th>
+              <th className="p-2 text-right">Unit Price ($)</th>
+              <th className="p-2 text-right">Total Price ($)</th>
               <th className="p-2 text-center">Actions</th>
             </tr>
           </thead>
@@ -183,8 +209,19 @@ export default function ReceiptEditor({
                     className="w-24 p-1 border rounded text-right"
                   />
                 </td>
-                <td className="p-2 text-right">
-                  ${item.totalPrice.toFixed(2)}
+                <td className="p-2">
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={item.totalPrice}
+                    onChange={(e) =>
+                      updateItem(index, {
+                        totalPrice: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                    className="w-24 p-1 border rounded text-right"
+                  />
                 </td>
                 <td className="p-2 text-center">
                   <button

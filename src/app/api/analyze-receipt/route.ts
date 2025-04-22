@@ -66,7 +66,7 @@ export async function POST(request: Request) {
               content: [
                 {
                   type: "text",
-                  text: "Analyze this receipt and extract all items with their quantities, names, and prices. Also extract tax information.",
+                  text: "Analyze this receipt and extract all items with their quantities, names, and prices. Also extract tax information. If not stated, always assume item amount is the totalPrice.",
                 },
                 {
                   type: "image_url",
