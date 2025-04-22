@@ -67,7 +67,10 @@ export default function Home() {
       </main>
 
       <footer className="max-w-4xl mx-auto mt-12 pt-6 border-t text-center text-gray-500 text-sm">
-        <p>ReceiptWiser &copy; {new Date().getFullYear()}</p>
+        <p>
+          <a href="https://github.com/StreetLamb/receiptwiser">ReceiptWiser</a>{" "}
+          &copy; {new Date().getFullYear()}
+        </p>
       </footer>
     </div>
   );
