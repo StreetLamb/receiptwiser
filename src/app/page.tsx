@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import ReceiptUploader from "@/components/ReceiptUploader";
 import ReceiptEditor from "@/components/ReceiptEditor";
 import ShareButton from "@/components/ShareButton";
@@ -20,6 +21,30 @@ export default function Home() {
   const handleError = (errorMessage: string) => {
     setError(errorMessage);
     setReceipt(null);
+  };
+
+  // Create an empty receipt template for manual entry
+  const createEmptyReceipt = () => {
+    const emptyReceipt: Receipt = {
+      items: [
+        {
+          id: uuidv4(),
+          name: "",
+          quantity: 1,
+          unitPrice: 0,
+          totalPrice: 0,
+        },
+      ],
+      subtotal: 0,
+      serviceChargePercent: 0,
+      serviceChargeAmount: 0,
+      taxPercent: 0,
+      taxAmount: 0,
+      total: 0,
+    };
+
+    setReceipt(emptyReceipt);
+    setError(null);
   };
 
   // Handle receipt updates
@@ -44,7 +69,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* Receipt Upload */}
+        {/* Receipt Upload or Manual Creation */}
         {!receipt && (
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Upload Receipt</h2>
@@ -52,6 +77,16 @@ export default function Home() {
               onReceiptAnalyzed={handleReceiptAnalyzed}
               onError={handleError}
             />
+
+            <div className="mt-6 text-center">
+              <p className="text-gray-500 mb-2">- OR -</p>
+              <button
+                onClick={createEmptyReceipt}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              >
+                Create Receipt Manually
+              </button>
+            </div>
           </div>
         )}
 
