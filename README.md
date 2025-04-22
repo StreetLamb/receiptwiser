@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ReceiptWiser
+
+ReceiptWiser is a web application that allows users to scan receipts, analyze them using OpenAI's Vision API, edit the details, and share them with friends for easy bill splitting.
+
+## Features
+
+- **Receipt Scanning**: Upload images of receipts for automatic analysis
+- **AI-Powered Analysis**: Uses OpenAI's Vision API to extract items, quantities, prices, and tax information
+- **Interactive Editor**: Edit extracted receipt data, add/remove items, and adjust prices
+- **Shareable Links**: Generate and share links containing receipt data with friends
+- **Bill Splitting**: Recipients can select their items and see their portion of the bill
+- **Responsive Design**: Works on both desktop and mobile devices
+
+## Technology Stack
+
+- **Frontend**: Next.js, React, TypeScript
+- **Styling**: Tailwind CSS
+- **AI Integration**: OpenAI API with Vision capabilities
+- **Data Compression**: LZ-String for URL parameter compression
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js (v18 or later)
+- npm or yarn
+- OpenAI API key
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/StreetLamb/receiptwiser.git
+   cd receiptwiser
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-## Learn More
+3. Create a `.env.local` file in the root directory with your OpenAI API key:
+   ```
+   OPENAI_API_KEY=your_openai_api_key_here
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. Run the development server:
+   ```bash
+   turbo dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Usage Guide
 
-## Deploy on Vercel
+### Uploading a Receipt
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. On the home page, click on the upload area or drag and drop a receipt image.
+2. The application will send the image to OpenAI's Vision API for analysis.
+3. If you don't have a valid OpenAI API key, the application will use mock data for testing.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Editing Receipt Details
+
+1. Once the receipt is analyzed, you'll see the extracted items, quantities, and prices.
+2. Edit any incorrect information by clicking on the respective fields.
+3. Add new items using the "Add Item" button.
+4. Remove items using the "Delete" button next to each item.
+5. Adjust tax percentage if needed.
+
+### Sharing with Friends
+
+1. After finalizing the receipt details, click the "Share Receipt" button.
+2. A shareable link will be generated and copied to your clipboard.
+3. Share this link with friends who were part of the bill.
+
+### Viewing a Shared Receipt
+
+1. When opening a shared link, you'll see the receipt details.
+2. Select the items you ordered by checking the boxes.
+3. Adjust quantities if needed.
+4. See your portion of the bill, including tax, at the bottom.
+
+## Configuration
+
+### Environment Variables
+
+- `OPENAI_API_KEY`: Your OpenAI API key for receipt analysis.
+
+## Troubleshooting
+
+### Common Issues
+
+- **API Key Issues**: Ensure your OpenAI API key is valid and has sufficient credits.
+- **Image Upload Problems**: Make sure your image is in a supported format (JPEG, PNG, HEIC).
+- **Shared Link Errors**: If a shared link doesn't work, it may be corrupted or too long.
+
+### Debugging
+
+- Check the browser console for detailed error messages.
+- Server logs provide information about API calls and processing.
+- The application includes extensive error handling and logging to help diagnose issues.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
