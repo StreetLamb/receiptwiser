@@ -15,6 +15,7 @@ export default function ShareButton({ receipt }: ShareButtonProps) {
   const generateShareableLink = () => {
     try {
       // Compress the receipt data to make the URL shorter
+      receipt.imageUrl = undefined;
       const compressedData = compressToEncodedURIComponent(
         JSON.stringify(receipt)
       );
