@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Receipt, ReceiptItem } from "@/types";
 import { v4 as uuidv4 } from "uuid";
+import NumberInput from "./NumberInput";
 
 interface ReceiptEditorProps {
   receipt: Receipt;
@@ -178,29 +179,12 @@ export default function ReceiptEditor({
             {items.map((item, index) => (
               <tr key={item.id} className="border-b border-gray-200">
                 <td className="p-2">
-                  <input
-                    type="number"
-                    value={item.quantity === 0 ? "" : item.quantity}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      // Allow empty input during editing
-                      if (value === "") {
-                        updateItem(index, { quantity: 0 });
-                      } else {
-                        const parsedValue = parseInt(value);
-                        if (!isNaN(parsedValue)) {
-                          updateItem(index, {
-                            quantity: Math.max(parsedValue, 0),
-                          });
-                        }
-                      }
-                    }}
-                    onBlur={() => {
-                      // Ensure quantity is at least 1 when field loses focus
-                      if (item.quantity < 1) {
-                        updateItem(index, { quantity: 1 });
-                      }
-                    }}
+                  <NumberInput
+                    value={item.quantity}
+                    onChange={(value) => updateItem(index, { quantity: value })}
+                    min={1}
+                    defaultValue={1}
+                    allowDecimals={false}
                     className="w-16 p-1 border rounded"
                   />
                 </td>
@@ -216,30 +200,26 @@ export default function ReceiptEditor({
                   />
                 </td>
                 <td className="p-2">
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
+                  <NumberInput
                     value={item.unitPrice}
-                    onChange={(e) =>
-                      updateItem(index, {
-                        unitPrice: parseFloat(e.target.value) || 0,
-                      })
+                    onChange={(value) =>
+                      updateItem(index, { unitPrice: value })
                     }
+                    min={0}
+                    step="0.01"
+                    allowDecimals={true}
                     className="w-24 p-1 border rounded text-right"
                   />
                 </td>
                 <td className="p-2">
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
+                  <NumberInput
                     value={item.totalPrice}
-                    onChange={(e) =>
-                      updateItem(index, {
-                        totalPrice: parseFloat(e.target.value) || 0,
-                      })
+                    onChange={(value) =>
+                      updateItem(index, { totalPrice: value })
                     }
+                    min={0}
+                    step="0.01"
+                    allowDecimals={true}
                     className="w-24 p-1 border rounded text-right"
                   />
                 </td>
@@ -275,14 +255,12 @@ export default function ReceiptEditor({
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center">
             <span className="mr-2">Service Charge (%):</span>
-            <input
-              type="number"
-              min="0"
-              step="0.1"
+            <NumberInput
               value={serviceChargePercent}
-              onChange={(e) =>
-                setServiceChargePercent(parseFloat(e.target.value) || 0)
-              }
+              onChange={setServiceChargePercent}
+              min={0}
+              step="0.1"
+              allowDecimals={true}
               className="w-16 p-1 border rounded"
             />
           </div>
@@ -292,12 +270,12 @@ export default function ReceiptEditor({
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center">
             <span className="mr-2">Tax (%):</span>
-            <input
-              type="number"
-              min="0"
-              step="0.1"
+            <NumberInput
               value={taxPercent}
-              onChange={(e) => setTaxPercent(parseFloat(e.target.value) || 0)}
+              onChange={setTaxPercent}
+              min={0}
+              step="0.1"
+              allowDecimals={true}
               className="w-16 p-1 border rounded"
             />
           </div>

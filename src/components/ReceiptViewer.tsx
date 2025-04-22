@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Receipt, ReceiptItem, UserBill } from "@/types";
 import { FaWhatsapp } from "react-icons/fa";
+import NumberInput from "./NumberInput";
 
 interface ReceiptViewerProps {
   receipt: Receipt;
@@ -151,20 +152,18 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
                   </td>
                   <td className="p-2 text-center">
                     {isSelected ? (
-                      <input
-                        type="number"
-                        min="1"
-                        max={item.quantity}
+                      <NumberInput
                         value={selectedQuantity}
-                        onChange={(e) =>
+                        onChange={(value) =>
                           updateSelectedQuantity(
                             item.id,
-                            Math.min(
-                              Math.max(1, parseInt(e.target.value) || 1),
-                              item.quantity
-                            )
+                            Math.min(Math.max(1, value), item.quantity)
                           )
                         }
+                        min={1}
+                        max={item.quantity}
+                        defaultValue={1}
+                        allowDecimals={false}
                         className="w-16 p-1 border rounded text-center"
                       />
                     ) : (
