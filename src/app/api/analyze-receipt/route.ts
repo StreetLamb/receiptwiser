@@ -14,6 +14,8 @@ const ReceiptItem = z.object({
 const ReceiptAnalysis = z.object({
   items: z.array(ReceiptItem),
   subtotal: z.number(),
+  serviceChargePercent: z.number(),
+  serviceChargeAmount: z.number(),
   taxPercent: z.number(),
   taxAmount: z.number(),
   total: z.number(),
@@ -115,6 +117,8 @@ export async function POST(request: Request) {
           data: {
             items: [],
             subtotal: 0,
+            serviceChargePercent: 0,
+            serviceChargeAmount: 0,
             taxPercent: 0,
             taxAmount: 0,
             total: 0,

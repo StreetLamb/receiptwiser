@@ -14,6 +14,9 @@ export default function ReceiptEditor({
   onChange,
 }: ReceiptEditorProps) {
   const [items, setItems] = useState<ReceiptItem[]>([]);
+  const [serviceChargePercent, setServiceChargePercent] = useState<number>(
+    receipt.serviceChargePercent || 0
+  );
   const [taxPercent, setTaxPercent] = useState<number>(receipt.taxPercent);
   const [creatorPhone, setCreatorPhone] = useState<string>(
     receipt.creatorPhone || ""
@@ -31,15 +34,18 @@ export default function ReceiptEditor({
     setItems(initializedItems);
   }, []);
 
-  // Calculate subtotal, tax amount, and total whenever items, tax percent, or phone number change
+  // Calculate subtotal, service charge, tax amount, and total whenever items, service charge percent, tax percent, or phone number change
   useEffect(() => {
     const subtotal = calculateSubtotal(items);
-    const taxAmount = (subtotal * taxPercent) / 100;
-    const total = subtotal + taxAmount;
+    const serviceChargeAmount = (subtotal * serviceChargePercent) / 100;
+    const taxAmount = ((subtotal + serviceChargeAmount) * taxPercent) / 100;
+    const total = subtotal + serviceChargeAmount + taxAmount;
 
     const updatedReceipt: Receipt = {
       items,
       subtotal,
+      serviceChargePercent,
+      serviceChargeAmount,
       taxPercent,
       taxAmount,
       total,
@@ -48,7 +54,7 @@ export default function ReceiptEditor({
     };
 
     onChange(updatedReceipt);
-  }, [items, taxPercent, creatorPhone]);
+  }, [items, serviceChargePercent, taxPercent, creatorPhone]);
 
   // Calculate subtotal from items
   const calculateSubtotal = (items: ReceiptItem[]): number => {
@@ -250,6 +256,23 @@ export default function ReceiptEditor({
         <div className="flex justify-between items-center mb-2">
           <span>Subtotal:</span>
           <span>${receipt.subtotal.toFixed(2)}</span>
+        </div>
+
+        <div className="flex justify-between items-center mb-2">
+          <div className="flex items-center">
+            <span className="mr-2">Service Charge (%):</span>
+            <input
+              type="number"
+              min="0"
+              step="0.1"
+              value={serviceChargePercent}
+              onChange={(e) =>
+                setServiceChargePercent(parseFloat(e.target.value) || 0)
+              }
+              className="w-16 p-1 border rounded"
+            />
+          </div>
+          <span>${receipt.serviceChargeAmount.toFixed(2)}</span>
         </div>
 
         <div className="flex justify-between items-center mb-2">
