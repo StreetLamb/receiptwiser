@@ -180,13 +180,27 @@ export default function ReceiptEditor({
                 <td className="p-2">
                   <input
                     type="number"
-                    min="1"
-                    value={item.quantity}
-                    onChange={(e) =>
-                      updateItem(index, {
-                        quantity: parseInt(e.target.value) || 1,
-                      })
-                    }
+                    value={item.quantity === 0 ? "" : item.quantity}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow empty input during editing
+                      if (value === "") {
+                        updateItem(index, { quantity: 0 });
+                      } else {
+                        const parsedValue = parseInt(value);
+                        if (!isNaN(parsedValue)) {
+                          updateItem(index, {
+                            quantity: Math.max(parsedValue, 0),
+                          });
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      // Ensure quantity is at least 1 when field loses focus
+                      if (item.quantity < 1) {
+                        updateItem(index, { quantity: 1 });
+                      }
+                    }}
                     className="w-16 p-1 border rounded"
                   />
                 </td>
