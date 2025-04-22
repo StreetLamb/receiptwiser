@@ -18,6 +18,7 @@ export default function ReceiptEditor({
   const [creatorPhone, setCreatorPhone] = useState<string>(
     receipt.creatorPhone || ""
   );
+  const [showImage, setShowImage] = useState<boolean>(true);
 
   // Calculate subtotal, tax amount, and total whenever items, tax percent, or phone number change
   useEffect(() => {
@@ -32,6 +33,7 @@ export default function ReceiptEditor({
       taxAmount,
       total,
       creatorPhone: creatorPhone || undefined,
+      imageUrl: receipt.imageUrl,
     };
 
     onChange(updatedReceipt);
@@ -87,6 +89,46 @@ export default function ReceiptEditor({
   return (
     <div className="w-full max-w-4xl mx-auto">
       <h2 className="text-xl font-semibold mb-4">Receipt Details</h2>
+
+      {/* Receipt Image Toggle */}
+      {receipt.imageUrl && (
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <button
+              onClick={() => setShowImage(!showImage)}
+              className="text-blue-500 hover:text-blue-700 text-sm flex items-center"
+            >
+              {showImage ? "Hide Receipt Image" : "Show Receipt Image"}
+              <svg
+                className={`ml-1 h-4 w-4 transform transition-transform ${
+                  showImage ? "rotate-180" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {showImage && (
+            <div className="border rounded-lg p-2 bg-gray-50">
+              <img
+                src={receipt.imageUrl}
+                alt="Receipt"
+                className="max-h-96 mx-auto"
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Items Table */}
       <div className="overflow-x-auto">

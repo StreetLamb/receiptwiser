@@ -27,80 +27,83 @@ export default function ReceiptUploader({
       const file = acceptedFiles[0];
       setIsLoading(true);
 
-      // Display the uploaded image
+      // Display the uploaded image and process the receipt
       const reader = new FileReader();
-      reader.onload = () => {
-        setUploadedImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-
-      try {
-        // Create form data to send to API
-        const formData = new FormData();
-        formData.append("image", file);
-
-        console.log("Sending image to API...");
-
-        // Send to our API endpoint
-        const response = await fetch("/api/analyze-receipt", {
-          method: "POST",
-          body: formData,
-        });
-
-        console.log("API response status:", response.status);
-
-        if (!response.ok) {
-          let errorMessage = "Failed to analyze receipt";
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.error || errorMessage;
-          } catch (e) {
-            console.error("Failed to parse error response:", e);
-          }
-          throw new Error(errorMessage);
-        }
-
-        // Clone the response before reading it as JSON
-        const responseClone = response.clone();
-        let data;
+      reader.onload = async () => {
+        const imageDataUrl = reader.result as string;
+        setUploadedImage(imageDataUrl);
 
         try {
-          data = await response.json();
-        } catch (e) {
-          console.error("Failed to parse response as JSON:", e);
-          const text = await responseClone.text();
-          console.error("Raw response:", text);
-          throw new Error("Invalid response format from server");
+          // Create form data to send to API
+          const formData = new FormData();
+          formData.append("image", file);
+
+          console.log("Sending image to API...");
+
+          // Send to our API endpoint
+          const response = await fetch("/api/analyze-receipt", {
+            method: "POST",
+            body: formData,
+          });
+
+          console.log("API response status:", response.status);
+
+          if (!response.ok) {
+            let errorMessage = "Failed to analyze receipt";
+            try {
+              const errorData = await response.json();
+              errorMessage = errorData.error || errorMessage;
+            } catch (e) {
+              console.error("Failed to parse error response:", e);
+            }
+            throw new Error(errorMessage);
+          }
+
+          // Clone the response before reading it as JSON
+          const responseClone = response.clone();
+          let data;
+
+          try {
+            data = await response.json();
+          } catch (e) {
+            console.error("Failed to parse response as JSON:", e);
+            const text = await responseClone.text();
+            console.error("Raw response:", text);
+            throw new Error("Invalid response format from server");
+          }
+
+          if (!data || !data.data) {
+            console.error("Unexpected response structure:", data);
+            throw new Error("Invalid response structure from server");
+          }
+
+          // Create a receipt with the image URL
+          const receiptData: Receipt = {
+            items: Array.isArray(data.data.items) ? data.data.items : [],
+            subtotal:
+              typeof data.data.subtotal === "number" ? data.data.subtotal : 0,
+            taxPercent:
+              typeof data.data.taxPercent === "number"
+                ? data.data.taxPercent
+                : 0,
+            taxAmount:
+              typeof data.data.taxAmount === "number" ? data.data.taxAmount : 0,
+            total: typeof data.data.total === "number" ? data.data.total : 0,
+            imageUrl: imageDataUrl, // Use the image data URL directly
+          };
+
+          onReceiptAnalyzed(receiptData);
+        } catch (error) {
+          console.error("Error analyzing receipt:", error);
+          onError(
+            error instanceof Error ? error.message : "Unknown error occurred"
+          );
+        } finally {
+          setIsLoading(false);
         }
+      };
 
-        if (!data || !data.data) {
-          console.error("Unexpected response structure:", data);
-          throw new Error("Invalid response structure from server");
-        }
-
-        console.log("Receipt data received:", data.data);
-
-        // Create a default receipt if the data is incomplete
-        const receiptData: Receipt = {
-          items: Array.isArray(data.data.items) ? data.data.items : [],
-          subtotal:
-            typeof data.data.subtotal === "number" ? data.data.subtotal : 0,
-          taxPercent:
-            typeof data.data.taxPercent === "number" ? data.data.taxPercent : 0,
-          taxAmount:
-            typeof data.data.taxAmount === "number" ? data.data.taxAmount : 0,
-          total: typeof data.data.total === "number" ? data.data.total : 0,
-        };
-
-        onReceiptAnalyzed(receiptData);
-      } catch (error) {
-        console.error("Error analyzing receipt:", error);
-        onError(
-          error instanceof Error ? error.message : "Unknown error occurred"
-        );
-      } finally {
-        setIsLoading(false);
-      }
+      reader.readAsDataURL(file);
     },
   });
 

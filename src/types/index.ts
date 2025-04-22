@@ -15,6 +15,7 @@ export interface Receipt {
   taxAmount: number;
   total: number;
   creatorPhone?: string; // Optional phone number for WhatsApp contact
+  imageUrl?: string; // Optional image URL for receipt reference
 }
 
 // User selection interface
