@@ -298,9 +298,7 @@ export default function ReceiptEditor({
         {/* Creator Phone Number for WhatsApp */}
         <div className="mt-4 pt-4 border-t">
           <div className="flex items-center mb-2">
-            <span className="mr-2">
-              Your Phone Number (for WhatsApp payments):
-            </span>
+            <span className="mr-2">Your Phone Number:</span>
             <input
               type="tel"
               value={creatorPhone}
