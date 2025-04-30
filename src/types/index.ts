@@ -16,6 +16,7 @@ export interface Receipt {
   taxPercent: number;
   taxAmount: number;
   total: number;
+  creatorName?: string; // Optional name of the payer
   creatorPhone?: string; // Optional phone number for WhatsApp contact
   imageUrl?: string; // Optional image URL for receipt reference
 }

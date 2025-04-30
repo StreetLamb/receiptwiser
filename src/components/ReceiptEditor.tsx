@@ -19,6 +19,9 @@ export default function ReceiptEditor({
     receipt.serviceChargePercent || 0
   );
   const [taxPercent, setTaxPercent] = useState<number>(receipt.taxPercent);
+  const [creatorName, setCreatorName] = useState<string>(
+    receipt.creatorName || ""
+  );
   const [creatorPhone, setCreatorPhone] = useState<string>(
     receipt.creatorPhone || ""
   );
@@ -35,7 +38,7 @@ export default function ReceiptEditor({
     setItems(initializedItems);
   }, []);
 
-  // Calculate subtotal, service charge, tax amount, and total whenever items, service charge percent, tax percent, or phone number change
+  // Calculate subtotal, service charge, tax amount, and total whenever items, service charge percent, tax percent, or creator details change
   useEffect(() => {
     const subtotal = calculateSubtotal(items);
     const serviceChargeAmount = (subtotal * serviceChargePercent) / 100;
@@ -50,12 +53,13 @@ export default function ReceiptEditor({
       taxPercent,
       taxAmount,
       total,
+      creatorName: creatorName || undefined,
       creatorPhone: creatorPhone || undefined,
       imageUrl: receipt.imageUrl,
     };
 
     onChange(updatedReceipt);
-  }, [items, serviceChargePercent, taxPercent, creatorPhone]);
+  }, [items, serviceChargePercent, taxPercent, creatorName, creatorPhone]);
 
   // Calculate subtotal from items
   const calculateSubtotal = (items: ReceiptItem[]): number => {
@@ -287,21 +291,33 @@ export default function ReceiptEditor({
           <span>${receipt.total.toFixed(2)}</span>
         </div>
 
-        {/* Creator Phone Number for WhatsApp */}
+        {/* Creator Details for WhatsApp */}
         <div className="mt-4 pt-4 border-t">
-          <div className="flex items-center mb-2">
-            <span className="mr-2">Your Phone Number:</span>
-            <input
-              type="tel"
-              value={creatorPhone}
-              onChange={(e) => setCreatorPhone(e.target.value)}
-              placeholder="e.g. 6512345678"
-              className="p-1 border rounded"
-            />
+          <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 mb-2">
+            <div className="flex items-center w-full md:w-auto">
+              <span className="mr-2 w-32 md:w-auto">Name:</span>
+              <input
+                type="text"
+                value={creatorName}
+                onChange={(e) => setCreatorName(e.target.value)}
+                placeholder="e.g. John Doe"
+                className="p-1 border rounded flex-grow md:flex-grow-0 md:mr-4"
+              />
+            </div>
+            <div className="flex items-center w-full md:w-auto">
+              <span className="mr-2 w-32 md:w-auto">Phone Number:</span>
+              <input
+                type="tel"
+                value={creatorPhone}
+                onChange={(e) => setCreatorPhone(e.target.value)}
+                placeholder="e.g. 6512345678"
+                className="p-1 border rounded flex-grow md:flex-grow-0"
+              />
+            </div>
           </div>
           <p className="text-xs text-gray-500">
-            Enter your phone number so people can notify you of payment via
-            WhatsApp
+            Enter your name and phone number so people can identify and notify
+            you of payment via WhatsApp
           </p>
         </div>
       </div>

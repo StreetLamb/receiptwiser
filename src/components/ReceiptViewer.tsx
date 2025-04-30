@@ -212,7 +212,11 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
             </div>
 
             <div className="flex justify-between items-center font-bold text-lg mt-2 pt-2 border-t">
-              <span>Total:</span>
+              <span>
+                {receipt.creatorName
+                  ? `Pay to ${receipt.creatorName}:`
+                  : "Total:"}
+              </span>
               <span>${userBill.total.toFixed(2)}</span>
             </div>
 
@@ -229,7 +233,9 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
                   <span>Notify Payment via WhatsApp</span>
                 </a>
                 <p className="text-xs text-gray-500 mt-1 text-center">
-                  Click to notify the receipt creator that you have paid
+                  {receipt.creatorName
+                    ? `Notify ${receipt.creatorName} that you have paid`
+                    : "Notify the receipt creator that you have paid"}
                 </p>
               </div>
             )}
