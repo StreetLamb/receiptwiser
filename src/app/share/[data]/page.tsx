@@ -7,6 +7,24 @@ import { Receipt } from "@/types";
 import ReceiptViewer from "@/components/ReceiptViewer";
 import { useParams } from "next/navigation";
 
+// Interface for the minimal receipt item
+interface MinimalReceiptItem {
+  n: string; // name
+  q: number; // quantity
+  p: number; // unit price
+}
+
+// Interface for the minimal receipt
+interface MinimalReceipt {
+  i: MinimalReceiptItem[]; // items
+  t: number; // total
+  s: number; // subtotal
+  tx: number; // tax percent
+  sc: number; // service charge percent
+  cn?: string; // creator name (optional)
+  cp?: string; // creator phone (optional)
+}
+
 export default function SharedReceiptPage() {
   const [receipt, setReceipt] = useState<Receipt | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -26,8 +44,35 @@ export default function SharedReceiptPage() {
       }
 
       // Parse the decompressed data
-      const parsedReceipt = JSON.parse(decompressedData) as Receipt;
-      setReceipt(parsedReceipt);
+      const minimalReceipt = JSON.parse(decompressedData) as MinimalReceipt;
+
+      // Reconstruct the full receipt from minimal data
+      const reconstructedReceipt: Receipt = {
+        // Rebuild items with IDs and calculated total prices
+        items: minimalReceipt.i.map((item, index: number) => ({
+          id: `item-${index}`, // Generate an ID
+          name: item.n,
+          quantity: item.q,
+          unitPrice: item.p,
+          totalPrice: Number((item.p * item.q).toFixed(2)),
+        })),
+        subtotal: minimalReceipt.s,
+        total: minimalReceipt.t,
+        taxPercent: minimalReceipt.tx,
+        serviceChargePercent: minimalReceipt.sc,
+        // Calculate amounts based on percentages
+        taxAmount: Number(
+          ((minimalReceipt.tx / 100) * minimalReceipt.s).toFixed(2)
+        ),
+        serviceChargeAmount: Number(
+          ((minimalReceipt.sc / 100) * minimalReceipt.s).toFixed(2)
+        ),
+        // Add back the optional fields if they exist
+        ...(minimalReceipt.cn ? { creatorName: minimalReceipt.cn } : {}),
+        ...(minimalReceipt.cp ? { creatorPhone: minimalReceipt.cp } : {}),
+      };
+
+      setReceipt(reconstructedReceipt);
     } catch (error) {
       console.error("Error parsing receipt data:", error);
       setError(

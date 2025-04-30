@@ -14,10 +14,27 @@ export default function ShareButton({ receipt }: ShareButtonProps) {
 
   const generateShareableLink = () => {
     try {
-      // Compress the receipt data to make the URL shorter
-      receipt.imageUrl = undefined;
+      // Create a minimal version of the receipt with abbreviated keys
+      const minimalReceipt = {
+        // Items with minimal properties
+        i: receipt.items.map((item) => ({
+          n: item.name, // name
+          q: item.quantity, // quantity
+          p: Number(item.unitPrice.toFixed(2)), // price per unit with 2 decimal places
+        })),
+        // Essential totals and rates
+        t: Number(receipt.total.toFixed(2)), // total
+        s: Number(receipt.subtotal.toFixed(2)), // subtotal
+        tx: Number(receipt.taxPercent.toFixed(2)), // tax percent
+        sc: Number(receipt.serviceChargePercent.toFixed(2)), // service charge percent
+        // Optional creator info (only if present)
+        ...(receipt.creatorName ? { cn: receipt.creatorName } : {}),
+        ...(receipt.creatorPhone ? { cp: receipt.creatorPhone } : {}),
+      };
+
+      // Compress the minimal receipt data
       const compressedData = compressToEncodedURIComponent(
-        JSON.stringify(receipt)
+        JSON.stringify(minimalReceipt)
       );
 
       // Create the shareable URL
