@@ -154,16 +154,16 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
                     {isSelected ? (
                       <NumberInput
                         value={selectedQuantity}
-                        onChange={(value) =>
-                          updateSelectedQuantity(
-                            item.id,
-                            Math.min(Math.max(1, value), item.quantity)
-                          )
-                        }
-                        min={1}
+                        onChange={(value) => {
+                          // During typing, don't apply max constraints to allow fraction input
+                          // The NumberInput component will handle constraints on blur
+                          updateSelectedQuantity(item.id, value);
+                        }}
+                        min={0}
                         max={item.quantity}
                         defaultValue={1}
-                        allowDecimals={false}
+                        allowDecimals={true}
+                        allowFractions={true}
                         className="w-16 p-1 border rounded text-center"
                       />
                     ) : (

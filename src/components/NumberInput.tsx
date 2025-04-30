@@ -10,6 +10,7 @@ interface NumberInputProps {
   step?: string | number;
   defaultValue?: number; // Value to use when empty & loses focus
   allowDecimals?: boolean;
+  allowFractions?: boolean; // Allow fraction inputs like 1/2, 1/4, etc.
   className?: string;
   placeholder?: string;
   onBlur?: () => void;
@@ -25,6 +26,7 @@ export default function NumberInput({
   step,
   defaultValue = 0,
   allowDecimals = true,
+  allowFractions = false,
   className = "",
   placeholder = "",
   onBlur,
@@ -58,6 +60,13 @@ export default function NumberInput({
       return;
     }
 
+    // Check if the input is a simple fraction (contains '/')
+    if (allowFractions && newValue.includes("/")) {
+      // Just store the raw input value without evaluation
+      // Don't call onChange during fraction typing
+      return;
+    }
+
     // Parse the value based on whether decimals are allowed
     const parsedValue = allowDecimals
       ? parseFloat(newValue)
@@ -65,28 +74,42 @@ export default function NumberInput({
 
     // Only update if it's a valid number
     if (!isNaN(parsedValue)) {
-      // Apply min/max constraints if specified
-      let constrainedValue = parsedValue;
-      if (max !== undefined) constrainedValue = Math.min(constrainedValue, max);
-
-      // Don't apply min constraint during editing - will be applied on blur
-      onChange(constrainedValue);
+      // Don't apply any constraints during typing
+      // All constraints will be applied on blur
+      onChange(parsedValue);
     }
   };
 
   const handleBlur = () => {
-    // Apply minimum value constraint when field loses focus
+    // Apply all constraints when field loses focus
     let finalValue = value;
 
     if (value === 0 && inputValue === "") {
       finalValue = defaultValue;
+    } else if (allowFractions && inputValue.includes("/")) {
+      // Evaluate fractions only on blur
+      const parts = inputValue.split("/");
+      if (parts.length === 2) {
+        const numerator = parseInt(parts[0]);
+        const denominator = parseInt(parts[1]);
+
+        if (!isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
+          // Calculate the fraction value
+          finalValue = Math.round((numerator / denominator) * 10000) / 10000;
+        }
+      }
     }
 
+    // Apply min/max constraints
     if (min !== undefined && finalValue < min) {
       finalValue = min;
-      // Update the display value
-      setInputValue(finalValue.toString());
     }
+    if (max !== undefined && finalValue > max) {
+      finalValue = max;
+    }
+
+    // Update the display value with the constrained value
+    setInputValue(finalValue.toString());
 
     // Update the model with the final value
     onChange(finalValue);
@@ -97,7 +120,7 @@ export default function NumberInput({
 
   return (
     <input
-      type="number"
+      type={allowFractions ? "text" : "number"}
       value={inputValue}
       onChange={handleChange}
       onBlur={handleBlur}
