@@ -11,6 +11,8 @@ export interface ReceiptItem {
 export interface Receipt {
   items: ReceiptItem[];
   subtotal: number;
+  discountPercent: number;
+  discountAmount: number;
   serviceChargePercent: number;
   serviceChargeAmount: number;
   taxPercent: number;
@@ -31,6 +33,7 @@ export interface UserSelection {
 export interface UserBill {
   selectedItems: (ReceiptItem & { selectedQuantity: number })[];
   subtotal: number;
+  discountAmount: number;
   serviceChargeAmount: number;
   taxAmount: number;
   total: number;

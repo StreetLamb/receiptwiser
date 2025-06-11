@@ -59,6 +59,7 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
 
     // Add totals
     message += `\nSubtotal: $${userBill.subtotal.toFixed(2)}`;
+    message += `\nDiscount: -$${userBill.discountAmount.toFixed(2)}`;
     message += `\nService Charge: $${userBill.serviceChargeAmount.toFixed(2)}`;
     message += `\nTax: $${userBill.taxAmount.toFixed(2)}`;
     message += `\nTotal: $${userBill.total.toFixed(2)}`;
@@ -87,17 +88,20 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
       0
     );
 
-    // Calculate proportional service charge
-    const serviceChargeRate = receipt.serviceChargeAmount / receipt.subtotal;
-    const serviceChargeAmount = subtotal * serviceChargeRate;
+    // Apply discount proportionally
+    const discountAmount = (subtotal * receipt.discountPercent) / 100;
+    const discountedSubtotal = subtotal - discountAmount;
 
-    // Calculate proportional tax (applied to subtotal + service charge)
-    const taxBase = receipt.subtotal + receipt.serviceChargeAmount;
-    const taxRate = receipt.taxAmount / taxBase;
-    const taxAmount = (subtotal + serviceChargeAmount) * taxRate;
+    // Calculate service charge based on discounted subtotal
+    const serviceChargeAmount =
+      (discountedSubtotal * receipt.serviceChargePercent) / 100;
+
+    // Calculate tax (applied to discounted subtotal + service charge)
+    const taxAmount =
+      ((discountedSubtotal + serviceChargeAmount) * receipt.taxPercent) / 100;
 
     // Calculate total
-    const total = subtotal + serviceChargeAmount + taxAmount;
+    const total = discountedSubtotal + serviceChargeAmount + taxAmount;
 
     // Create user bill
     const bill: UserBill = {
@@ -106,6 +110,7 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
         selectedQuantity: quantity,
       })),
       subtotal,
+      discountAmount,
       serviceChargeAmount,
       taxAmount,
       total,
@@ -199,6 +204,11 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
             <div className="flex justify-between items-center mb-1">
               <span>Subtotal:</span>
               <span>${userBill.subtotal.toFixed(2)}</span>
+            </div>
+
+            <div className="flex justify-between items-center mb-1">
+              <span>Discount:</span>
+              <span>-${userBill.discountAmount.toFixed(2)}</span>
             </div>
 
             <div className="flex justify-between items-center mb-1">
