@@ -22,9 +22,24 @@ export default function ReceiptEditor({
   const [creatorName, setCreatorName] = useState<string>(
     receipt.creatorName || ""
   );
-  const [creatorPhone, setCreatorPhone] = useState<string>(
-    receipt.creatorPhone || ""
-  );
+  const areaCodes = ["65", "60", "61", "62", "1"];
+  const [creatorPhoneAreaCode, setCreatorPhoneAreaCode] = useState<string>("65");
+  const [creatorPhoneNumber, setCreatorPhoneNumber] = useState<string>("");
+
+  // Initialize phone fields based on receipt data
+  useEffect(() => {
+    if (receipt.creatorPhone) {
+      const sortedCodes = [...areaCodes].sort((a, b) => b.length - a.length);
+      for (const code of sortedCodes) {
+        if (receipt.creatorPhone.startsWith(code)) {
+          setCreatorPhoneAreaCode(code);
+          setCreatorPhoneNumber(receipt.creatorPhone.slice(code.length));
+          return;
+        }
+      }
+      setCreatorPhoneNumber(receipt.creatorPhone);
+    }
+  }, []);
   const [showImage, setShowImage] = useState<boolean>(true);
 
   // Initialize items with correct unit prices calculated from total prices
@@ -45,6 +60,9 @@ export default function ReceiptEditor({
     const taxAmount = ((subtotal + serviceChargeAmount) * taxPercent) / 100;
     const total = subtotal + serviceChargeAmount + taxAmount;
 
+    const combinedPhone =
+      creatorPhoneNumber !== "" ? creatorPhoneAreaCode + creatorPhoneNumber : "";
+
     const updatedReceipt: Receipt = {
       items,
       subtotal,
@@ -54,12 +72,19 @@ export default function ReceiptEditor({
       taxAmount,
       total,
       creatorName: creatorName || undefined,
-      creatorPhone: creatorPhone || undefined,
+      creatorPhone: combinedPhone || undefined,
       imageUrl: receipt.imageUrl,
     };
 
     onChange(updatedReceipt);
-  }, [items, serviceChargePercent, taxPercent, creatorName, creatorPhone]);
+  }, [
+    items,
+    serviceChargePercent,
+    taxPercent,
+    creatorName,
+    creatorPhoneAreaCode,
+    creatorPhoneNumber,
+  ]);
 
   // Calculate subtotal from items
   const calculateSubtotal = (items: ReceiptItem[]): number => {
@@ -306,13 +331,28 @@ export default function ReceiptEditor({
             </div>
             <div className="flex items-center w-full md:w-auto">
               <span className="mr-2 w-32 md:w-auto">Phone Number:</span>
-              <input
-                type="tel"
-                value={creatorPhone}
-                onChange={(e) => setCreatorPhone(e.target.value)}
-                placeholder="e.g. 6512345678"
-                className="p-1 border rounded flex-grow md:flex-grow-0"
-              />
+              <div className="flex w-full md:w-auto">
+                <select
+                  value={creatorPhoneAreaCode}
+                  onChange={(e) => setCreatorPhoneAreaCode(e.target.value)}
+                  className="p-1 border rounded-l bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                >
+                  {areaCodes.map((code) => (
+                    <option key={code} value={code}>
+                      +{code}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="tel"
+                  value={creatorPhoneNumber}
+                  onChange={(e) =>
+                    setCreatorPhoneNumber(e.target.value.replace(/\D/g, ""))
+                  }
+                  placeholder="e.g. 12345678"
+                  className="p-1 border border-l-0 rounded-r flex-grow md:flex-grow-0"
+                />
+              </div>
             </div>
           </div>
           <p className="text-xs text-gray-500">
