@@ -15,6 +15,9 @@ export default function ReceiptEditor({
   onChange,
 }: ReceiptEditorProps) {
   const [items, setItems] = useState<ReceiptItem[]>([]);
+  const [discountPercent, setDiscountPercent] = useState<number>(
+    receipt.discountPercent || 0
+  );
   const [serviceChargePercent, setServiceChargePercent] = useState<number>(
     receipt.serviceChargePercent || 0
   );
@@ -38,16 +41,20 @@ export default function ReceiptEditor({
     setItems(initializedItems);
   }, []);
 
-  // Calculate subtotal, service charge, tax amount, and total whenever items, service charge percent, tax percent, or creator details change
+  // Calculate subtotal, discount, service charge, tax amount, and total whenever values change
   useEffect(() => {
     const subtotal = calculateSubtotal(items);
-    const serviceChargeAmount = (subtotal * serviceChargePercent) / 100;
-    const taxAmount = ((subtotal + serviceChargeAmount) * taxPercent) / 100;
-    const total = subtotal + serviceChargeAmount + taxAmount;
+    const discountAmount = (subtotal * discountPercent) / 100;
+    const discountedSubtotal = subtotal - discountAmount;
+    const serviceChargeAmount = (discountedSubtotal * serviceChargePercent) / 100;
+    const taxAmount = ((discountedSubtotal + serviceChargeAmount) * taxPercent) / 100;
+    const total = discountedSubtotal + serviceChargeAmount + taxAmount;
 
     const updatedReceipt: Receipt = {
       items,
       subtotal,
+      discountPercent,
+      discountAmount,
       serviceChargePercent,
       serviceChargeAmount,
       taxPercent,
@@ -59,7 +66,7 @@ export default function ReceiptEditor({
     };
 
     onChange(updatedReceipt);
-  }, [items, serviceChargePercent, taxPercent, creatorName, creatorPhone]);
+  }, [items, discountPercent, serviceChargePercent, taxPercent, creatorName, creatorPhone]);
 
   // Calculate subtotal from items
   const calculateSubtotal = (items: ReceiptItem[]): number => {
@@ -254,6 +261,21 @@ export default function ReceiptEditor({
         <div className="flex justify-between items-center mb-2">
           <span>Subtotal:</span>
           <span>${receipt.subtotal.toFixed(2)}</span>
+        </div>
+
+        <div className="flex justify-between items-center mb-2">
+          <div className="flex items-center">
+            <span className="mr-2">Discount (%):</span>
+            <NumberInput
+              value={discountPercent}
+              onChange={setDiscountPercent}
+              min={0}
+              step="0.1"
+              allowDecimals={true}
+              className="w-16 p-1 border rounded"
+            />
+          </div>
+          <span>${receipt.discountAmount.toFixed(2)}</span>
         </div>
 
         <div className="flex justify-between items-center mb-2">

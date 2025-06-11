@@ -19,6 +19,7 @@ interface MinimalReceipt {
   i: MinimalReceiptItem[]; // items
   t: number; // total
   s: number; // subtotal
+  d: number; // discount percent
   tx: number; // tax percent
   sc: number; // service charge percent
   cn?: string; // creator name (optional)
@@ -58,19 +59,28 @@ export default function SharedReceiptPage() {
         })),
         subtotal: minimalReceipt.s,
         total: minimalReceipt.t,
-        taxPercent: minimalReceipt.tx,
+        discountPercent: minimalReceipt.d,
         serviceChargePercent: minimalReceipt.sc,
+        taxPercent: minimalReceipt.tx,
         // Calculate amounts based on percentages
-        taxAmount: Number(
-          ((minimalReceipt.tx / 100) * minimalReceipt.s).toFixed(2)
+        discountAmount: Number(
+          ((minimalReceipt.d / 100) * minimalReceipt.s).toFixed(2)
         ),
-        serviceChargeAmount: Number(
-          ((minimalReceipt.sc / 100) * minimalReceipt.s).toFixed(2)
-        ),
+        serviceChargeAmount: 0, // placeholder, updated below
+        taxAmount: 0, // placeholder, updated below
         // Add back the optional fields if they exist
         ...(minimalReceipt.cn ? { creatorName: minimalReceipt.cn } : {}),
         ...(minimalReceipt.cp ? { creatorPhone: minimalReceipt.cp } : {}),
       };
+
+      const discountedSubtotal =
+        reconstructedReceipt.subtotal - reconstructedReceipt.discountAmount;
+      reconstructedReceipt.serviceChargeAmount = Number(
+        ((reconstructedReceipt.serviceChargePercent / 100) * discountedSubtotal).toFixed(2)
+      );
+      reconstructedReceipt.taxAmount = Number(
+        ((reconstructedReceipt.taxPercent / 100) * (discountedSubtotal + reconstructedReceipt.serviceChargeAmount)).toFixed(2)
+      );
 
       setReceipt(reconstructedReceipt);
     } catch (error) {

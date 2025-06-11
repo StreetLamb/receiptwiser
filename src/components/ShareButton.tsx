@@ -25,6 +25,7 @@ export default function ShareButton({ receipt }: ShareButtonProps) {
         // Essential totals and rates
         t: Number(receipt.total.toFixed(2)), // total
         s: Number(receipt.subtotal.toFixed(2)), // subtotal
+        d: Number(receipt.discountPercent.toFixed(2)), // discount percent
         tx: Number(receipt.taxPercent.toFixed(2)), // tax percent
         sc: Number(receipt.serviceChargePercent.toFixed(2)), // service charge percent
         // Optional creator info (only if present)

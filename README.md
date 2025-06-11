@@ -7,6 +7,7 @@ ReceiptWiser is a web application that allows users to scan receipts, analyze th
 - **Receipt Scanning**: Upload images of receipts for automatic analysis
 - **AI-Powered Analysis**: Uses OpenAI's Vision API to extract items, quantities, prices, and tax information
 - **Interactive Editor**: Edit extracted receipt data, add/remove items, and adjust prices
+- **Discount Handling**: Apply a discount percentage to the entire receipt
 - **Shareable Links**: Generate and share links containing receipt data with friends
 - **Bill Splitting**: Recipients can select their items and see their portion of the bill
 - **Responsive Design**: Works on both desktop and mobile devices
@@ -66,6 +67,7 @@ ReceiptWiser is a web application that allows users to scan receipts, analyze th
 3. Add new items using the "Add Item" button.
 4. Remove items using the "Delete" button next to each item.
 5. Adjust tax percentage if needed.
+6. Apply a discount percentage if the receipt includes a discount.
 
 ### Sharing with Friends
 

@@ -36,6 +36,8 @@ export default function Home() {
         },
       ],
       subtotal: 0,
+      discountPercent: 0,
+      discountAmount: 0,
       serviceChargePercent: 0,
       serviceChargeAmount: 0,
       taxPercent: 0,
