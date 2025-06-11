@@ -335,7 +335,7 @@ export default function ReceiptEditor({
                 <select
                   value={creatorPhoneAreaCode}
                   onChange={(e) => setCreatorPhoneAreaCode(e.target.value)}
-                  className="p-1 border rounded-l bg-white"
+                  className="p-1 border rounded-l bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                 >
                   {areaCodes.map((code) => (
                     <option key={code} value={code}>
