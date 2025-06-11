@@ -201,20 +201,20 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
           </div>
 
           <div className="mt-4 pt-2 border-t">
-          <div className="flex justify-between items-center mb-1">
-            <span>Subtotal:</span>
-            <span>${userBill.subtotal.toFixed(2)}</span>
-          </div>
+            <div className="flex justify-between items-center mb-1">
+              <span>Subtotal:</span>
+              <span>${userBill.subtotal.toFixed(2)}</span>
+            </div>
 
-          <div className="flex justify-between items-center mb-1">
-            <span>Discount:</span>
-            <span>-${userBill.discountAmount.toFixed(2)}</span>
-          </div>
+            <div className="flex justify-between items-center mb-1">
+              <span>Discount:</span>
+              <span>-${userBill.discountAmount.toFixed(2)}</span>
+            </div>
 
-          <div className="flex justify-between items-center mb-1">
-            <span>Service Charge:</span>
-            <span>${userBill.serviceChargeAmount.toFixed(2)}</span>
-          </div>
+            <div className="flex justify-between items-center mb-1">
+              <span>Service Charge:</span>
+              <span>${userBill.serviceChargeAmount.toFixed(2)}</span>
+            </div>
 
             <div className="flex justify-between items-center mb-1">
               <span>Tax:</span>
