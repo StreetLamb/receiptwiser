@@ -87,13 +87,12 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
       0
     );
 
-    // Calculate proportional service charge
-    const serviceChargeRate = receipt.serviceChargeAmount / receipt.subtotal;
+    // Calculate proportional service charge based on percentage
+    const serviceChargeRate = receipt.serviceChargePercent / 100;
     const serviceChargeAmount = subtotal * serviceChargeRate;
 
     // Calculate proportional tax (applied to subtotal + service charge)
-    const taxBase = receipt.subtotal + receipt.serviceChargeAmount;
-    const taxRate = receipt.taxAmount / taxBase;
+    const taxRate = receipt.taxPercent / 100;
     const taxAmount = (subtotal + serviceChargeAmount) * taxRate;
 
     // Calculate total
