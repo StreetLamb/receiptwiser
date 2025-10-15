@@ -16,6 +16,11 @@ export async function GET(
             orderIndex: "asc",
           },
         },
+        payments: {
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
       },
     });
 
@@ -44,6 +49,17 @@ export async function GET(
       ...(receipt.creatorName && { creatorName: receipt.creatorName }),
       ...(receipt.creatorPhone && { creatorPhone: receipt.creatorPhone }),
       ...(receipt.imageUrl && { imageUrl: receipt.imageUrl }),
+      payments: receipt.payments.map((payment) => ({
+        id: payment.id,
+        receiptId: payment.receiptId,
+        payerName: payment.payerName,
+        items: payment.items,
+        subtotal: Number(payment.subtotal),
+        serviceChargeAmount: Number(payment.serviceChargeAmount),
+        taxAmount: Number(payment.taxAmount),
+        total: Number(payment.total),
+        createdAt: payment.createdAt.toISOString(),
+      })),
     };
 
     return NextResponse.json(formattedReceipt);

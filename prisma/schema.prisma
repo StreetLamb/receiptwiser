@@ -24,6 +24,7 @@ model Receipt {
   createdAt            DateTime      @default(now()) @map("created_at")
   updatedAt            DateTime      @updatedAt @map("updated_at")
   items                ReceiptItem[]
+  payments             Payment[]
 
   @@map("receipts")
 }
@@ -39,4 +40,19 @@ model ReceiptItem {
   receipt    Receipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
 
   @@map("receipt_items")
+}
+
+model Payment {
+  id                   String   @id @default(uuid())
+  receiptId            String   @map("receipt_id")
+  payerName            String   @map("payer_name")
+  items                Json     // Array of {itemId: string, itemName: string, quantity: number, amount: number}
+  subtotal             Decimal  @db.Decimal(10, 2)
+  serviceChargeAmount  Decimal  @map("service_charge_amount") @db.Decimal(10, 2)
+  taxAmount            Decimal  @map("tax_amount") @db.Decimal(10, 2)
+  total                Decimal  @db.Decimal(10, 2)
+  createdAt            DateTime @default(now()) @map("created_at")
+  receipt              Receipt  @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
 }

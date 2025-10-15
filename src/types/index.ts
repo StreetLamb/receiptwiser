@@ -16,9 +16,10 @@ export interface Receipt {
   taxPercent: number;
   taxAmount: number;
   total: number;
-  creatorName?: string; // Optional name of the payer
-  creatorPhone?: string; // Optional phone number for WhatsApp contact
+  creatorName?: string; // Optional name of the person who paid initially
+  creatorPhone?: string; // Optional phone number to contact for payment
   imageUrl?: string; // Optional image URL for receipt reference
+  payments?: Payment[]; // Optional list of recorded payments
 }
 
 // User selection interface
@@ -34,4 +35,25 @@ export interface UserBill {
   serviceChargeAmount: number;
   taxAmount: number;
   total: number;
+}
+
+// Payment item interface
+export interface PaymentItem {
+  itemId: string;
+  itemName: string;
+  quantity: number;
+  amount: number;
+}
+
+// Payment interface
+export interface Payment {
+  id: string;
+  receiptId: string;
+  payerName: string;
+  items: PaymentItem[];
+  subtotal: number;
+  serviceChargeAmount: number;
+  taxAmount: number;
+  total: number;
+  createdAt: string;
 }
