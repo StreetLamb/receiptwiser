@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Receipt {
+  id                   String        @id @default(uuid())
+  creatorName          String?       @map("creator_name")
+  creatorPhone         String?       @map("creator_phone")
+  subtotal             Decimal       @db.Decimal(10, 2)
+  taxPercent           Decimal       @map("tax_percent") @db.Decimal(5, 2)
+  taxAmount            Decimal       @map("tax_amount") @db.Decimal(10, 2)
+  serviceChargePercent Decimal       @map("service_charge_percent") @db.Decimal(5, 2)
+  serviceChargeAmount  Decimal       @map("service_charge_amount") @db.Decimal(10, 2)
+  total                Decimal       @db.Decimal(10, 2)
+  imageUrl             String?       @map("image_url")
+  createdAt            DateTime      @default(now()) @map("created_at")
+  updatedAt            DateTime      @updatedAt @map("updated_at")
+  items                ReceiptItem[]
+
+  @@map("receipts")
+}
+
+model ReceiptItem {
+  id         String  @id @default(uuid())
+  receiptId  String  @map("receipt_id")
+  name       String
+  quantity   Decimal @db.Decimal(10, 2)
+  unitPrice  Decimal @map("unit_price") @db.Decimal(10, 2)
+  totalPrice Decimal @map("total_price") @db.Decimal(10, 2)
+  orderIndex Int     @map("order_index")
+  receipt    Receipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+
+  @@map("receipt_items")
+}

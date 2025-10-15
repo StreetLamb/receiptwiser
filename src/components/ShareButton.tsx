@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Receipt } from "@/types";
-import { compressToEncodedURIComponent } from "lz-string";
 import { FaShareAlt } from "react-icons/fa";
 
 interface ShareButtonProps {
@@ -11,45 +10,42 @@ interface ShareButtonProps {
 
 export default function ShareButton({ receipt }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const generateShareableLink = () => {
+  const generateShareableLink = async () => {
     try {
-      // Create a minimal version of the receipt with abbreviated keys
-      const minimalReceipt = {
-        // Items with minimal properties
-        i: receipt.items.map((item) => ({
-          n: item.name, // name
-          q: item.quantity, // quantity
-          p: Number(item.unitPrice.toFixed(2)), // price per unit with 2 decimal places
-        })),
-        // Essential totals and rates
-        t: Number(receipt.total.toFixed(2)), // total
-        s: Number(receipt.subtotal.toFixed(2)), // subtotal
-        tx: Number(receipt.taxPercent.toFixed(2)), // tax percent
-        sc: Number(receipt.serviceChargePercent.toFixed(2)), // service charge percent
-        // Optional creator info (only if present)
-        ...(receipt.creatorName ? { cn: receipt.creatorName } : {}),
-        ...(receipt.creatorPhone ? { cp: receipt.creatorPhone } : {}),
-      };
+      setIsLoading(true);
 
-      // Compress the minimal receipt data
-      const compressedData = compressToEncodedURIComponent(
-        JSON.stringify(minimalReceipt)
-      );
+      // Save receipt to database
+      const response = await fetch("/api/receipts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(receipt),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save receipt");
+      }
+
+      const { id } = await response.json();
 
       // Create the shareable URL
       const baseUrl = window.location.origin;
-      const shareableUrl = `${baseUrl}/share/${compressedData}`;
+      const shareableUrl = `${baseUrl}/share/${id}`;
 
       return shareableUrl;
     } catch (error) {
       console.error("Error generating shareable link:", error);
       return null;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const copyToClipboard = async () => {
-    const url = generateShareableLink();
+    const url = await generateShareableLink();
 
     if (!url) {
       return;
@@ -72,10 +68,15 @@ export default function ShareButton({ receipt }: ShareButtonProps) {
     <div className="mt-6">
       <button
         onClick={copyToClipboard}
-        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center"
+        disabled={isLoading}
+        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center disabled:bg-gray-400 disabled:cursor-not-allowed"
       >
         <FaShareAlt className="mr-2 text-xl" />
-        {copied ? "Copied to clipboard!" : "Share Receipt"}
+        {isLoading
+          ? "Saving..."
+          : copied
+          ? "Copied to clipboard!"
+          : "Share Receipt"}
       </button>
     </div>
   );
