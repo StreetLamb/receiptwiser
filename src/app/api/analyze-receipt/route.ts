@@ -61,7 +61,7 @@ export async function POST(request: Request) {
       console.log("Calling OpenAI API with structured output...");
       try {
         const completion = await openai.chat.completions.parse({
-          model: "gpt-5",
+          model: "gpt-5-mini",
           messages: [
             {
               role: "user",
@@ -80,7 +80,6 @@ export async function POST(request: Request) {
               ],
             },
           ],
-          max_completion_tokens: 1500,
           response_format: zodResponseFormat(
             ReceiptAnalysis,
             "receipt_analysis"
