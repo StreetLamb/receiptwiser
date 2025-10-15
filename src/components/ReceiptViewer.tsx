@@ -13,6 +13,12 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface ReceiptViewerProps {
   receipt: Receipt;
@@ -353,34 +359,47 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
       {/* Payment History */}
       {payments.length > 0 && (
         <div className="mt-8 border-t pt-6">
-          <h3 className="text-lg font-semibold mb-4">Payment History</h3>
-          <div className="space-y-4">
-            {payments.map((payment) => (
-              <div key={payment.id} className="border rounded-lg p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <p className="font-semibold">{payment.payerName}</p>
-                    <p className="text-xs text-gray-500">
-                      {new Date(payment.createdAt).toLocaleString()}
-                    </p>
-                  </div>
-                  <p className="font-bold text-lg">${payment.total.toFixed(2)}</p>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="payment-history" className="border-none">
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center justify-between w-full pr-4">
+                  <h3 className="text-lg font-semibold">Payment History</h3>
+                  <span className="text-sm font-normal text-gray-600">
+                    ${payments.reduce((sum, p) => sum + p.total, 0).toFixed(2)} out of ${receipt.total.toFixed(2)} paid ({payments.length} payment{payments.length !== 1 ? 's' : ''})
+                  </span>
                 </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-4 pt-2">
+                  {payments.map((payment) => (
+                    <div key={payment.id} className="border rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-semibold">{payment.payerName}</p>
+                          <p className="text-xs text-gray-500">
+                            {new Date(payment.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                        <p className="font-bold text-lg">${payment.total.toFixed(2)}</p>
+                      </div>
 
-                <div className="mt-2 text-sm">
-                  <p className="font-medium mb-1">Items paid:</p>
-                  <ul className="space-y-1">
-                    {payment.items.map((item, idx) => (
-                      <li key={idx} className="flex justify-between text-gray-700">
-                        <span>{item.itemName} x {item.quantity}</span>
-                        <span>${item.amount.toFixed(2)}</span>
-                      </li>
-                    ))}
-                  </ul>
+                      <div className="mt-2 text-sm">
+                        <p className="font-medium mb-1">Items paid:</p>
+                        <ul className="space-y-1">
+                          {payment.items.map((item, idx) => (
+                            <li key={idx} className="flex justify-between text-gray-700">
+                              <span>{item.itemName} x {item.quantity}</span>
+                              <span>${item.amount.toFixed(2)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            ))}
-          </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
       )}
     </div>
