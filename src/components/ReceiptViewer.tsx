@@ -36,6 +36,7 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [payerName, setPayerName] = useState("");
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
+  const [recordPaymentError, setRecordPaymentError] = useState("");
 
   // Toggle item selection
   const toggleItemSelection = (item: ReceiptItem) => {
@@ -66,13 +67,16 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
 
   // Handle payment recording
   const handleRecordPayment = async () => {
+    // Clear previous errors
+    setRecordPaymentError("");
+
     if (!payerName.trim()) {
-      alert("Please enter your name");
+      setRecordPaymentError("Please enter your name");
       return;
     }
 
     if (!userBill || userBill.selectedItems.length === 0) {
-      alert("Please select items to pay for");
+      setRecordPaymentError("Please select items to pay for");
       return;
     }
 
@@ -117,12 +121,13 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
 
       // Reset form
       setPayerName("");
+      setRecordPaymentError("");
       setSelectedItems(new Map());
       setUserBill(null);
       setShowPaymentModal(false);
     } catch (error) {
       console.error("Error recording payment:", error);
-      alert("Failed to record payment. Please try again.");
+      setRecordPaymentError("Failed to record payment. Please try again.");
     } finally {
       setIsSubmittingPayment(false);
     }
@@ -360,11 +365,17 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
               <Input
                 type="text"
                 value={payerName}
-                onChange={(e) => setPayerName(e.target.value)}
+                onChange={(e) => {
+                  setPayerName(e.target.value);
+                  if (recordPaymentError) setRecordPaymentError("");
+                }}
                 placeholder="Enter your name"
                 className="w-full"
                 disabled={isSubmittingPayment}
               />
+              {recordPaymentError && (
+                <p className="text-sm text-red-500">{recordPaymentError}</p>
+              )}
             </div>
 
             {userBill && (
@@ -407,6 +418,7 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
               onClick={() => {
                 setShowPaymentModal(false);
                 setPayerName("");
+                setRecordPaymentError("");
               }}
               disabled={isSubmittingPayment}
             >
