@@ -385,7 +385,7 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
 
                       <div className="mt-2 text-sm">
                         <p className="font-medium mb-1">Items paid:</p>
-                        <ul className="space-y-1">
+                        <ul className="space-y-1 mb-3">
                           {payment.items.map((item, idx) => (
                             <li key={idx} className="flex justify-between text-gray-700">
                               <span>{item.itemName} x {item.quantity}</span>
@@ -393,6 +393,29 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
                             </li>
                           ))}
                         </ul>
+
+                        <div className="pt-2 border-t space-y-1">
+                          <div className="flex justify-between text-gray-700">
+                            <span>Subtotal:</span>
+                            <span>${payment.subtotal.toFixed(2)}</span>
+                          </div>
+                          {payment.serviceChargeAmount > 0 && (
+                            <div className="flex justify-between text-gray-700">
+                              <span>Service Charge:</span>
+                              <span>${payment.serviceChargeAmount.toFixed(2)}</span>
+                            </div>
+                          )}
+                          {payment.taxAmount > 0 && (
+                            <div className="flex justify-between text-gray-700">
+                              <span>Tax:</span>
+                              <span>${payment.taxAmount.toFixed(2)}</span>
+                            </div>
+                          )}
+                          <div className="flex justify-between font-semibold pt-1 border-t">
+                            <span>Total:</span>
+                            <span>${payment.total.toFixed(2)}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}
