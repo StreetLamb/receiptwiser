@@ -3,6 +3,15 @@
 import { useState } from "react";
 import { Receipt, ReceiptItem, UserBill, Payment, PaymentItem } from "@/types";
 import NumberInput from "./NumberInput";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface ReceiptViewerProps {
   receipt: Receipt;
@@ -275,14 +284,19 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
         </div>
       )}
 
-      {/* Payment Modal */}
-      {showPaymentModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="text-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4">Record Your Payment</h3>
+      {/* Payment Dialog */}
+      <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Record Your Payment</DialogTitle>
+            <DialogDescription>
+              Enter your name to record the payment for the selected items.
+            </DialogDescription>
+          </DialogHeader>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
                 Your Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -290,51 +304,52 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
                 value={payerName}
                 onChange={(e) => setPayerName(e.target.value)}
                 placeholder="Enter your name"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded-md bg-background"
                 disabled={isSubmittingPayment}
               />
             </div>
 
             {userBill && (
-              <div className="mb-4 p-3 rounded">
-                <p className="text-sm font-medium mb-2">Payment Summary:</p>
-                <div className="text-sm space-y-1">
+              <div className="p-4 border rounded-md bg-muted">
+                <p className="text-sm font-medium mb-3">Payment Summary:</p>
+                <div className="space-y-2 text-sm">
                   {userBill.selectedItems.map((item) => (
                     <div key={item.id} className="flex justify-between">
                       <span>{item.name} x {item.selectedQuantity}</span>
                       <span>${(item.unitPrice * item.selectedQuantity).toFixed(2)}</span>
                     </div>
                   ))}
-                  <div className="pt-2 border-t font-bold flex justify-between">
+                  <div className="pt-2 mt-2 border-t font-bold flex justify-between">
                     <span>Total:</span>
                     <span>${userBill.total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
             )}
-
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  setShowPaymentModal(false);
-                  setPayerName("");
-                }}
-                className="flex-1 py-2 px-4 bg-gray-500 hover:bg-gray-600 rounded transition-colors"
-                disabled={isSubmittingPayment}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleRecordPayment}
-                className="flex-1 py-2 px-4 bg-blue-500 hover:bg-blue-600 rounded transition-colors disabled:bg-blue-300"
-                disabled={isSubmittingPayment}
-              >
-                {isSubmittingPayment ? "Recording..." : "Record Payment"}
-              </button>
-            </div>
           </div>
-        </div>
-      )}
+
+          <DialogFooter className="sm:space-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setShowPaymentModal(false);
+                setPayerName("");
+              }}
+              disabled={isSubmittingPayment}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleRecordPayment}
+              disabled={isSubmittingPayment}
+            >
+              {isSubmittingPayment ? "Recording..." : "Record Payment"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Payment History */}
       {payments.length > 0 && (
