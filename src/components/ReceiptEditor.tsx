@@ -361,8 +361,7 @@ export default function ReceiptEditor({
             </div>
           </div>
           <p className="text-xs text-gray-500">
-            Enter your name and phone number so people can identify and notify
-            you of payment via WhatsApp
+            Enter your name and phone number so people can identify and pay you via PayNow.
           </p>
         </div>
       </div>

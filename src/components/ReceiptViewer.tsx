@@ -377,9 +377,23 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
                       <span>${(item.unitPrice * item.selectedQuantity).toFixed(2)}</span>
                     </div>
                   ))}
-                  <div className="pt-2 mt-2 border-t font-bold flex justify-between">
-                    <span>Total:</span>
-                    <span>${userBill.total.toFixed(2)}</span>
+                  <div className="pt-2 mt-2 border-t space-y-1">
+                    <div className="flex justify-between">
+                      <span>Subtotal:</span>
+                      <span>${userBill.subtotal.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Service Charge:</span>
+                      <span>${userBill.serviceChargeAmount.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Tax:</span>
+                      <span>${userBill.taxAmount.toFixed(2)}</span>
+                    </div>
+                    <div className="pt-1 border-t font-bold flex justify-between">
+                      <span>Total:</span>
+                      <span>${userBill.total.toFixed(2)}</span>
+                    </div>
                   </div>
                 </div>
               </div>
