@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Receipt } from "@/types";
 import { FaShareAlt } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
 
 interface ShareButtonProps {
   receipt: Receipt;
@@ -66,10 +67,10 @@ export default function ShareButton({ receipt }: ShareButtonProps) {
 
   return (
     <div className="mt-6">
-      <button
+      <Button
         onClick={copyToClipboard}
         disabled={isLoading}
-        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center disabled:bg-gray-400 disabled:cursor-not-allowed"
+        className="bg-green-500 hover:bg-green-600 flex items-center"
       >
         <FaShareAlt className="mr-2 text-xl" />
         {isLoading
@@ -77,7 +78,7 @@ export default function ShareButton({ receipt }: ShareButtonProps) {
           : copied
           ? "Copied to clipboard!"
           : "Share Receipt"}
-      </button>
+      </Button>
     </div>
   );
 }

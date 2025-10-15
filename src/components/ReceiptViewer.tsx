@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface ReceiptViewerProps {
   receipt: Receipt;
@@ -111,8 +112,6 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
       setSelectedItems(new Map());
       setUserBill(null);
       setShowPaymentModal(false);
-
-      alert("Payment recorded successfully!");
     } catch (error) {
       console.error("Error recording payment:", error);
       alert("Failed to record payment. Please try again.");
@@ -210,7 +209,7 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
                         defaultValue={1}
                         allowDecimals={true}
                         allowFractions={true}
-                        className="w-16 p-1 border rounded text-center"
+                        className="w-16 text-center"
                       />
                     ) : (
                       <span className="text-gray-400">-</span>
@@ -268,12 +267,12 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
 
             {/* Record Payment Button */}
             <div className="mt-4 pt-2 border-t">
-              <button
+              <Button
                 onClick={() => setShowPaymentModal(true)}
-                className="w-full py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors"
+                className="w-full"
               >
                 Record Payment
-              </button>
+              </Button>
               <p className="text-xs text-gray-500 mt-1 text-center">
                 {receipt.creatorName
                   ? `Record that you've paid ${receipt.creatorName}`
@@ -299,12 +298,12 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
               <label className="text-sm font-medium">
                 Your Name <span className="text-red-500">*</span>
               </label>
-              <input
+              <Input
                 type="text"
                 value={payerName}
                 onChange={(e) => setPayerName(e.target.value)}
                 placeholder="Enter your name"
-                className="w-full p-2 border rounded-md bg-background"
+                className="w-full"
                 disabled={isSubmittingPayment}
               />
             </div>

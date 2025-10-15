@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Receipt } from "@/types";
 import ReceiptViewer from "@/components/ReceiptViewer";
 import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export default function SharedReceiptPage() {
   const [receipt, setReceipt] = useState<Receipt | null>(null);
@@ -81,12 +82,11 @@ export default function SharedReceiptPage() {
             <ReceiptViewer receipt={receipt} />
 
             <div className="mt-8 text-center">
-              <Link
-                href="/"
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 inline-block"
-              >
-                Create Your Own Receipt
-              </Link>
+              <Button asChild>
+                <Link href="/">
+                  Create Your Own Receipt
+                </Link>
+              </Button>
             </div>
           </div>
         )}

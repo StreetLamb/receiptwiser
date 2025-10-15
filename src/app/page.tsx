@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import ReceiptUploader from "@/components/ReceiptUploader";
 import ReceiptEditor from "@/components/ReceiptEditor";
 import ShareButton from "@/components/ShareButton";
+import { Button } from "@/components/ui/button";
 import { Receipt } from "@/types";
 
 export default function Home() {
@@ -80,12 +81,11 @@ export default function Home() {
 
             <div className="mt-6 text-center">
               <p className="text-gray-500 mb-2">- OR -</p>
-              <button
+              <Button
                 onClick={createEmptyReceipt}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
               >
                 Create Receipt Manually
-              </button>
+              </Button>
             </div>
           </div>
         )}

@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { Receipt, ReceiptItem } from "@/types";
 import { v4 as uuidv4 } from "uuid";
 import NumberInput from "./NumberInput";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface ReceiptEditorProps {
   receipt: Receipt;
@@ -150,9 +152,10 @@ export default function ReceiptEditor({
       {receipt.imageUrl && (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setShowImage(!showImage)}
-              className="text-blue-500 hover:text-blue-700 text-sm flex items-center"
+              className="text-sm flex items-center"
             >
               {showImage ? "Hide Receipt Image" : "Show Receipt Image"}
               <svg
@@ -171,7 +174,7 @@ export default function ReceiptEditor({
                   d="M19 9l-7 7-7-7"
                 />
               </svg>
-            </button>
+            </Button>
           </div>
 
           {showImage && (
@@ -214,17 +217,17 @@ export default function ReceiptEditor({
                     min={1}
                     defaultValue={1}
                     allowDecimals={false}
-                    className="w-16 p-1 border rounded"
+                    className="w-16"
                   />
                 </td>
                 <td className="p-2">
-                  <input
+                  <Input
                     type="text"
                     value={item.name}
                     onChange={(e) =>
                       updateItem(index, { name: e.target.value })
                     }
-                    className="w-full min-w-[150px] p-1 border rounded"
+                    className="w-full min-w-[150px]"
                     placeholder="Item name"
                   />
                 </td>
@@ -237,7 +240,7 @@ export default function ReceiptEditor({
                     min={0}
                     step="0.01"
                     allowDecimals={true}
-                    className="w-24 p-1 border rounded text-right"
+                    className="w-24 text-right"
                   />
                 </td>
                 <td className="p-2">
@@ -249,16 +252,18 @@ export default function ReceiptEditor({
                     min={0}
                     step="0.01"
                     allowDecimals={true}
-                    className="w-24 p-1 border rounded text-right"
+                    className="w-24 text-right"
                   />
                 </td>
                 <td className="p-2 text-center">
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => deleteItem(index)}
                     className="text-red-500 hover:text-red-700"
                   >
                     Delete
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -267,12 +272,12 @@ export default function ReceiptEditor({
       </div>
 
       {/* Add Item Button */}
-      <button
+      <Button
         onClick={addItem}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        className="mt-4"
       >
         Add Item
-      </button>
+      </Button>
 
       {/* Tax and Totals */}
       <div className="mt-6 border-t pt-4">
@@ -290,7 +295,7 @@ export default function ReceiptEditor({
               min={0}
               step="0.1"
               allowDecimals={true}
-              className="w-16 p-1 border rounded"
+              className="w-20"
             />
           </div>
           <span>${receipt.serviceChargeAmount.toFixed(2)}</span>
@@ -305,7 +310,7 @@ export default function ReceiptEditor({
               min={0}
               step="0.1"
               allowDecimals={true}
-              className="w-16 p-1 border rounded"
+              className="w-20"
             />
           </div>
           <span>${receipt.taxAmount.toFixed(2)}</span>
@@ -321,12 +326,12 @@ export default function ReceiptEditor({
           <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 mb-2">
             <div className="flex items-center w-full md:w-auto">
               <span className="mr-2 w-32 md:w-auto">Name:</span>
-              <input
+              <Input
                 type="text"
                 value={creatorName}
                 onChange={(e) => setCreatorName(e.target.value)}
                 placeholder="e.g. John Doe"
-                className="p-1 border rounded flex-grow md:flex-grow-0 md:mr-4"
+                className="flex-grow md:flex-grow-0 md:mr-4"
               />
             </div>
             <div className="flex items-center w-full md:w-auto">
@@ -343,14 +348,14 @@ export default function ReceiptEditor({
                     </option>
                   ))}
                 </select>
-                <input
+                <Input
                   type="tel"
                   value={creatorPhoneNumber}
                   onChange={(e) =>
                     setCreatorPhoneNumber(e.target.value.replace(/\D/g, ""))
                   }
                   placeholder="e.g. 12345678"
-                  className="p-1 border border-l-0 rounded-r flex-grow md:flex-grow-0"
+                  className="border-l-0 rounded-l-none flex-grow md:flex-grow-0"
                 />
               </div>
             </div>
