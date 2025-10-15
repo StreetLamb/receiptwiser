@@ -192,7 +192,7 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
     // proxyType: 'mobile', proxyValue: phone number, edit: 'no', price: total amount
     // merchantName left empty and additionalComments set as 'NA'
     try {
-      const paynowstring = paynowGenerator(
+      return paynowGenerator(
         "mobile",
         phoneNumber,
         "no",
@@ -200,8 +200,6 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
         "",
         "ReceiptWiser"
       );
-      console.log("Generated PayNow string:", paynowstring);
-      return paynowstring;
     } catch (error) {
       console.error("Error generating PayNow QR code:", error);
       return null;
