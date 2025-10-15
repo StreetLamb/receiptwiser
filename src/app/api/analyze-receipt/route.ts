@@ -60,8 +60,8 @@ export async function POST(request: Request) {
       // Call OpenAI API with structured output
       console.log("Calling OpenAI API with structured output...");
       try {
-        const completion = await openai.beta.chat.completions.parse({
-          model: "gpt-4o-mini",
+        const completion = await openai.chat.completions.parse({
+          model: "gpt-5",
           messages: [
             {
               role: "user",
