@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Receipt, ReceiptItem, UserBill, Payment, PaymentItem } from "@/types";
 import NumberInput from "./NumberInput";
 import {
@@ -19,6 +19,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { QRCodeSVG } from "qrcode.react";
+import { paynowGenerator } from "paynow-generator";
 
 interface ReceiptViewerProps {
   receipt: Receipt;
@@ -165,6 +167,42 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
     setUserBill(bill);
   };
 
+  // Generate PayNow QR code string if applicable
+  const payNowString = useMemo(() => {
+    // Only generate if:
+    // 1. Creator phone exists and starts with "65" (Singapore)
+    // 2. User has selected items with a total
+    if (!receipt.creatorPhone || !receipt.creatorPhone.startsWith("65")) {
+      return null;
+    }
+
+    if (!userBill || userBill.total <= 0) {
+      return null;
+    }
+
+    // Extract phone number without country code
+    const phoneNumber = receipt.creatorPhone.slice(2);
+
+    // Generate PayNow string
+    // proxyType: 'mobile', proxyValue: phone number, edit: 'no', price: total amount
+    // merchantName left empty and additionalComments set as 'NA'
+    try {
+      const paynowstring = paynowGenerator(
+        "mobile",
+        phoneNumber,
+        "no",
+        Number.parseFloat(userBill.total.toFixed(2)),
+        "",
+        "ReceiptWiser"
+      );
+      console.log("Generated PayNow string:", paynowstring);
+      return paynowstring;
+    } catch (error) {
+      console.error("Error generating PayNow QR code:", error);
+      return null;
+    }
+  }, [receipt.creatorPhone, userBill]);
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <h2 className="text-xl font-semibold mb-4">Shared Receipt</h2>
@@ -270,6 +308,21 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
               </span>
               <span>${userBill.total.toFixed(2)}</span>
             </div>
+
+            {/* PayNow QR Code */}
+            {payNowString && (
+              <div className="mt-4 pt-4 border-t">
+                <div className="flex flex-col items-center space-y-2">
+                  <p className="text-sm font-medium">Pay with PayNow</p>
+                  <div className="bg-white p-4 rounded-lg border-2 border-gray-200">
+                    <QRCodeSVG value={payNowString} size={200} level="H" />
+                  </div>
+                  <p className="text-xs text-gray-500 text-center">
+                    Scan this QR code with your banking app to pay via PayNow
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Record Payment Button */}
             <div className="mt-4 pt-2 border-t">
