@@ -53,10 +53,21 @@ export default function Home() {
     setReceipt(updatedReceipt);
   };
 
+  // Reset to upload screen
+  const handleStartOver = () => {
+    setReceipt(null);
+    setError(null);
+  };
+
   return (
     <div className="min-h-screen p-8">
       <header className="max-w-4xl mx-auto mb-8">
-        <h1 className="text-3xl font-bold text-center mb-2">ReceiptWiser</h1>
+        <h1
+          className="text-3xl font-bold text-center mb-2 cursor-pointer hover:text-blue-600 transition-colors"
+          onClick={handleStartOver}
+        >
+          ReceiptWiser
+        </h1>
         <p className="text-center text-gray-600">
           Upload a receipt, edit the details, and share with friends
         </p>
