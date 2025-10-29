@@ -3,6 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { Receipt } from "@/types";
 import { v4 as uuidv4 } from "uuid";
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    },
+  },
+};
+
 export async function POST(request: NextRequest) {
   try {
     const receipt: Receipt = await request.json();
