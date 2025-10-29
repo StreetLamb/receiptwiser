@@ -17,13 +17,20 @@ export default function ShareButton({ receipt }: ShareButtonProps) {
     try {
       setIsLoading(true);
 
+      // The analyzed receipt includes a data URL for the uploaded image. This
+      // makes the payload several megabytes large, which causes the API request
+      // to exceed Vercel's body size limits. Strip the image before sending the
+      // data to the backend so we only persist the structured receipt details.
+      const { imageUrl: _imageUrl, ...receiptWithoutImage } = receipt;
+      void _imageUrl;
+
       // Save receipt to database
       const response = await fetch("/api/receipts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(receipt),
+        body: JSON.stringify(receiptWithoutImage),
       });
 
       if (!response.ok) {
