@@ -3,7 +3,8 @@
 import { useState, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { Receipt } from "@/types";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 interface ReceiptUploaderProps {
   onReceiptAnalyzed: (receipt: Receipt) => void;
@@ -148,8 +149,11 @@ export default function ReceiptUploader({
         <input {...getInputProps()} />
         {isLoading ? (
           <div className="text-center">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mx-auto"></div>
-            <p className="mt-2 text-sm text-gray-500">Analyzing receipt...</p>
+            <p className="mt-2 text-sm text-gray-500 flex items-center justify-center gap-2">
+              <Spinner/>Analyzing receipt...</p>
+            <p className="mt-1 text-xs text-gray-400">
+              May take up to a minute for larger receipts
+            </p>
             <Button
               onClick={(e) => {
                 e.stopPropagation();

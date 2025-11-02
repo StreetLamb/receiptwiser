@@ -6,6 +6,7 @@ import { Receipt } from "@/types";
 import ReceiptViewer from "@/components/ReceiptViewer";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function SharedReceiptPage() {
   const [receipt, setReceipt] = useState<Receipt | null>(null);
@@ -71,8 +72,9 @@ export default function SharedReceiptPage() {
         {/* Loading State */}
         {isLoading && !error && (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading receipt data...</p>
+            <p className="mt-4 text-gray-600 flex items-center justify-center gap-2">
+              <Spinner />Loading receipt data...
+            </p>
           </div>
         )}
 
