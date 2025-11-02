@@ -12,6 +12,7 @@ interface ShareButtonProps {
 export default function ShareButton({ receipt }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [shareableUrl, setShareableUrl] = useState<string | null>(null);
 
   const generateShareableLink = async () => {
     try {
@@ -41,9 +42,10 @@ export default function ShareButton({ receipt }: ShareButtonProps) {
 
       // Create the shareable URL
       const baseUrl = window.location.origin;
-      const shareableUrl = `${baseUrl}/share/${id}`;
+      const url = `${baseUrl}/share/${id}`;
 
-      return shareableUrl;
+      setShareableUrl(url);
+      return url;
     } catch (error) {
       console.error("Error generating shareable link:", error);
       return null;
@@ -86,6 +88,21 @@ export default function ShareButton({ receipt }: ShareButtonProps) {
           ? "Copied to clipboard!"
           : "Share Receipt"}
       </Button>
+
+      {/* Display the shareable URL below the button */}
+      {shareableUrl && (
+        <div className="mt-4 p-3 bg-gray-100 border border-gray-300 rounded-md">
+          <p className="text-sm text-gray-600 mb-1">Share this link:</p>
+          <a
+            href={shareableUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-600 underline break-all"
+          >
+            {shareableUrl}
+          </a>
+        </div>
+      )}
     </div>
   );
 }
