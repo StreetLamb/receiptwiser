@@ -464,7 +464,7 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
                         <p className="font-medium mb-1">Items paid:</p>
                         <ul className="space-y-1 mb-3">
                           {payment.items.map((item, idx) => (
-                            <li key={idx} className="flex justify-between text-gray-700">
+                            <li key={idx} className="flex justify-between">
                               <span>{item.itemName} x {item.quantity}</span>
                               <span>${item.amount.toFixed(2)}</span>
                             </li>
@@ -472,18 +472,18 @@ export default function ReceiptViewer({ receipt }: ReceiptViewerProps) {
                         </ul>
 
                         <div className="pt-2 border-t space-y-1">
-                          <div className="flex justify-between text-gray-700">
+                          <div className="flex justify-between">
                             <span>Subtotal:</span>
                             <span>${payment.subtotal.toFixed(2)}</span>
                           </div>
                           {payment.serviceChargeAmount > 0 && (
-                            <div className="flex justify-between text-gray-700">
+                            <div className="flex justify-between">
                               <span>Service Charge:</span>
                               <span>${payment.serviceChargeAmount.toFixed(2)}</span>
                             </div>
                           )}
                           {payment.taxAmount > 0 && (
-                            <div className="flex justify-between text-gray-700">
+                            <div className="flex justify-between">
                               <span>Tax:</span>
                               <span>${payment.taxAmount.toFixed(2)}</span>
                             </div>
