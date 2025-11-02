@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { Receipt } from "@/types";
+import { Button } from "./ui/button";
 
 interface ReceiptUploaderProps {
   onReceiptAnalyzed: (receipt: Receipt) => void;
@@ -15,6 +16,16 @@ export default function ReceiptUploader({
 }: ReceiptUploaderProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const handleAbort = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      setIsLoading(false);
+      setUploadedImage(null);
+    }
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
@@ -26,6 +37,9 @@ export default function ReceiptUploader({
 
       const file = acceptedFiles[0];
       setIsLoading(true);
+
+      // Create a new AbortController for this request
+      abortControllerRef.current = new AbortController();
 
       // Display the uploaded image and process the receipt
       const reader = new FileReader();
@@ -44,6 +58,7 @@ export default function ReceiptUploader({
           const response = await fetch("/api/analyze-receipt", {
             method: "POST",
             body: formData,
+            signal: abortControllerRef.current?.signal,
           });
 
           console.log("API response status:", response.status);
@@ -102,12 +117,17 @@ export default function ReceiptUploader({
 
           onReceiptAnalyzed(receiptData);
         } catch (error) {
+          // Don't show error if the request was aborted by the user
+          if (error instanceof Error && error.name === "AbortError") {
+            return;
+          }
           console.error("Error analyzing receipt:", error);
           onError(
             error instanceof Error ? error.message : "Unknown error occurred"
           );
         } finally {
           setIsLoading(false);
+          abortControllerRef.current = null;
         }
       };
 
@@ -130,6 +150,15 @@ export default function ReceiptUploader({
           <div className="text-center">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mx-auto"></div>
             <p className="mt-2 text-sm text-gray-500">Analyzing receipt...</p>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAbort();
+              }}
+              className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            >
+              Cancel
+            </Button>
           </div>
         ) : (
           <div className="text-center">
