@@ -82,8 +82,14 @@ export default function ReceiptUploader({
             items: Array.isArray(data.data.items) ? data.data.items : [],
             subtotal:
               typeof data.data.subtotal === "number" ? data.data.subtotal : 0,
-            serviceChargePercent: 0, // Initialize service charge percent to 0
-            serviceChargeAmount: 0, // Initialize service charge amount to 0
+            serviceChargePercent:
+              typeof data.data.serviceChargePercent === "number"
+                ? data.data.serviceChargePercent
+                : 0,
+            serviceChargeAmount:
+              typeof data.data.serviceChargeAmount === "number"
+                ? data.data.serviceChargeAmount
+                : 0,
             taxPercent:
               typeof data.data.taxPercent === "number"
                 ? data.data.taxPercent
