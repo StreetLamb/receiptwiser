@@ -47,21 +47,17 @@ export async function POST(request: Request) {
     );
 
     try {
-      // Convert the image file to a buffer
-      console.log("Converting image to buffer...");
+      // Convert image directly to base64
+      console.log("Converting image to base64...");
       const bytes = await imageFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      // Convert buffer to base64
-      console.log("Converting buffer to base64...");
-      const base64Image = buffer.toString("base64");
+      const base64Image = Buffer.from(bytes).toString("base64");
       console.log("Base64 conversion complete. Length:", base64Image.length);
 
       // Call OpenAI API with structured output
       console.log("Calling OpenAI API with structured output...");
       try {
         const completion = await openai.chat.completions.parse({
-          model: "gpt-5-mini",
+          model: "gpt-5-nano",
           messages: [
             {
               role: "user",
